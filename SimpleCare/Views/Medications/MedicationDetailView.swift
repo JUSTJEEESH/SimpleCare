@@ -7,6 +7,7 @@ struct MedicationDetailView: View {
     @Bindable var medication: Medication
 
     @State private var showDeleteConfirmation = false
+    @State private var showEditSheet = false
     @State private var recentLogs: [MedicationLog] = []
 
     var body: some View {
@@ -40,12 +41,24 @@ struct MedicationDetailView: View {
             .navigationTitle(medication.name)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Edit") {
+                        showEditSheet = true
+                    }
+                    .foregroundStyle(SimpleCareColors.calmBlue)
+                    .font(.body.weight(.medium))
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }
                     .foregroundStyle(SimpleCareColors.calmBlue)
                 }
+            }
+            .sheet(isPresented: $showEditSheet) {
+                loadRecentLogs()
+            } content: {
+                EditMedicationView(medication: medication)
             }
             .alert("Remove Medication", isPresented: $showDeleteConfirmation) {
                 Button("Cancel", role: .cancel) { }
@@ -89,12 +102,15 @@ struct MedicationDetailView: View {
             if medication.isCritical {
                 HStack(spacing: 8) {
                     Image(systemName: "heart.fill")
-                        .foregroundStyle(SimpleCareColors.calmBlue)
-                    Text("Marked as important")
-                        .font(.subheadline)
-                        .foregroundStyle(SimpleCareColors.calmBlue)
+                        .foregroundStyle(SimpleCareColors.heartRed)
+                    Text("Important medication")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(SimpleCareColors.heartRed)
                 }
-                .padding(.top, 4)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 14)
+                .background(SimpleCareColors.heartRedLight)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,6 +176,18 @@ struct MedicationDetailView: View {
 
     private var actionsSection: some View {
         VStack(spacing: 12) {
+            Button {
+                showEditSheet = true
+            } label: {
+                Label("Edit Medication", systemImage: "pencil")
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(SimpleCareColors.calmBlue)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 50)
+                    .background(SimpleCareColors.calmBlueLight)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+
             Button {
                 showDeleteConfirmation = true
             } label: {

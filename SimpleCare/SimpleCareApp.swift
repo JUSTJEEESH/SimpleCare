@@ -16,7 +16,8 @@ struct SimpleCareApp: App {
                 Medication.self,
                 MedicationLog.self,
                 Appointment.self,
-                HealthNote.self
+                HealthNote.self,
+                CareCircleMember.self
             ])
             let config = ModelConfiguration(
                 schema: schema,

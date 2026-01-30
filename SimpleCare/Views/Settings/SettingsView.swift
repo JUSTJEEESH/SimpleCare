@@ -15,12 +15,16 @@ struct SettingsView: View {
     @State private var editedName = ""
     @State private var exportPDFData: Data?
 
+    @AppStorage("caregiverMode") private var caregiverMode = false
+    @AppStorage("caregiverName") private var caregiverName = ""
+
     @Query(filter: #Predicate<Medication> { $0.isActive })
     private var medications: [Medication]
 
     @Query private var allLogs: [MedicationLog]
     @Query private var appointments: [Appointment]
     @Query private var notes: [HealthNote]
+    @Query private var careCircleMembers: [CareCircleMember]
 
     var body: some View {
         NavigationStack {
@@ -134,29 +138,62 @@ struct SettingsView: View {
                     .font(.headline)
                     .foregroundStyle(SimpleCareColors.charcoal)
                 Spacer()
-                Text("Premium")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(SimpleCareColors.calmBlue)
-                    .clipShape(Capsule())
+                if !careCircleMembers.isEmpty {
+                    Text("\(careCircleMembers.count) \(careCircleMembers.count == 1 ? "person" : "people")")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(SimpleCareColors.calmBlue)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(SimpleCareColors.calmBlueLight)
+                        .clipShape(Capsule())
+                }
             }
 
-            Text("Share your care with someone you trust. They'll see a read-only view of your medications and appointments.")
-                .font(.subheadline)
-                .foregroundStyle(SimpleCareColors.secondaryText)
-                .lineSpacing(3)
+            if careCircleMembers.isEmpty {
+                Text("Add family or caregivers who can help keep track of your care.")
+                    .font(.subheadline)
+                    .foregroundStyle(SimpleCareColors.secondaryText)
+                    .lineSpacing(3)
+            } else {
+                // Show member names
+                HStack(spacing: -8) {
+                    ForEach(careCircleMembers.prefix(4), id: \.id) { member in
+                        let initials = member.name.split(separator: " ")
+                            .prefix(2).compactMap { $0.first }.map { String($0) }.joined().uppercased()
+                        Text(initials.isEmpty ? "?" : initials)
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 32, height: 32)
+                            .background(SimpleCareColors.calmBlue)
+                            .clipShape(Circle())
+                            .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                    }
+                    if careCircleMembers.count > 4 {
+                        Text("+\(careCircleMembers.count - 4)")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 32, height: 32)
+                            .background(SimpleCareColors.sage)
+                            .clipShape(Circle())
+                            .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                    }
+                }
+            }
 
             Button {
                 showCircleOfCare = true
             } label: {
-                Label("Learn More", systemImage: "person.2.fill")
+                Label(
+                    careCircleMembers.isEmpty ? "Set Up Circle of Care" : "Manage Circle of Care",
+                    systemImage: "person.2.fill"
+                )
                     .font(.body.weight(.medium))
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: 52)
             }
-            .buttonStyle(SecondaryButtonStyle())
+            .buttonStyle(careCircleMembers.isEmpty
+                ? PrimaryButtonStyle(backgroundColor: SimpleCareColors.calmBlue)
+                : PrimaryButtonStyle(backgroundColor: SimpleCareColors.sage))
         }
         .gentleCard()
     }
@@ -312,6 +349,7 @@ struct SettingsView: View {
         try? modelContext.delete(model: MedicationLog.self)
         try? modelContext.delete(model: Appointment.self)
         try? modelContext.delete(model: HealthNote.self)
+        try? modelContext.delete(model: CareCircleMember.self)
         try? modelContext.save()
 
         // Cancel all notifications
@@ -320,6 +358,8 @@ struct SettingsView: View {
         // Reset user defaults
         userName = ""
         appLockEnabled = false
+        caregiverMode = false
+        caregiverName = ""
         hasCompletedOnboarding = false
     }
 }
@@ -338,5 +378,5 @@ struct ShareSheet: UIViewControllerRepresentable {
 
 #Preview {
     SettingsView()
-        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self], inMemory: true)
+        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self, CareCircleMember.self], inMemory: true)
 }
