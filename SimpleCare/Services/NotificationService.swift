@@ -54,6 +54,34 @@ final class NotificationService {
             )
 
             center.add(request)
+
+            // Follow-up reminder 45 minutes later for missed doses
+            let followUpContent = UNMutableNotificationContent()
+            followUpContent.title = "Friendly reminder"
+            followUpContent.body = "You haven't marked \(medication.name) as taken yet."
+            followUpContent.sound = .default
+            followUpContent.categoryIdentifier = "MEDICATION_REMINDER"
+
+            let originalHour = dateComponents.hour ?? 0
+            let originalMinute = dateComponents.minute ?? 0
+            let totalMinutes = originalHour * 60 + originalMinute + 45
+
+            var followUpComponents = DateComponents()
+            followUpComponents.hour = totalMinutes / 60
+            followUpComponents.minute = totalMinutes % 60
+
+            let followUpTrigger = UNCalendarNotificationTrigger(
+                dateMatching: followUpComponents,
+                repeats: true
+            )
+
+            let followUpRequest = UNNotificationRequest(
+                identifier: "med-followup-\(medication.id.uuidString)-\(index)",
+                content: followUpContent,
+                trigger: followUpTrigger
+            )
+
+            center.add(followUpRequest)
         }
 
         // Register action categories
@@ -62,8 +90,11 @@ final class NotificationService {
 
     func cancelReminders(for medication: Medication) {
         let center = UNUserNotificationCenter.current()
-        let identifiers = medication.scheduleTimes.indices.map {
-            "med-\(medication.id.uuidString)-\($0)"
+        let identifiers = medication.scheduleTimes.indices.flatMap { index in
+            [
+                "med-\(medication.id.uuidString)-\(index)",
+                "med-followup-\(medication.id.uuidString)-\(index)"
+            ]
         }
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
