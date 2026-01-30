@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct AddMedicationFlowView: View {
     @Environment(\.dismiss) private var dismiss
@@ -14,6 +15,8 @@ struct AddMedicationFlowView: View {
     @State private var notes = ""
     @State private var isCritical = false
     @State private var showCompletion = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var medicationPhotoData: Data?
 
     private let totalSteps = 4
 
@@ -88,7 +91,7 @@ struct AddMedicationFlowView: View {
         VStack(spacing: 24) {
             Spacer()
 
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 Text("What is the medication name?")
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(SimpleCareColors.charcoal)
@@ -110,6 +113,56 @@ struct AddMedicationFlowView: View {
                     .padding(.horizontal, 32)
                     .submitLabel(.next)
                     .onSubmit { advanceStep() }
+
+                // Photo picker — optional pill photo
+                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                    if let photoData = medicationPhotoData, let uiImage = UIImage(data: photoData) {
+                        HStack(spacing: 12) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 56, height: 56)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                            Text("Photo added")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(SimpleCareColors.sage)
+
+                            Spacer()
+
+                            Text("Change")
+                                .font(.subheadline)
+                                .foregroundStyle(SimpleCareColors.calmBlue)
+                        }
+                        .padding(12)
+                        .background(SimpleCareColors.sageLight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    } else {
+                        HStack(spacing: 10) {
+                            Image(systemName: "camera.fill")
+                                .font(.body)
+                            Text("Add a photo of this pill")
+                                .font(.subheadline.weight(.medium))
+                        }
+                        .foregroundStyle(SimpleCareColors.calmBlue)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 48)
+                        .background(SimpleCareColors.calmBlueLight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                }
+                .padding(.horizontal, 32)
+                .onChange(of: selectedPhotoItem) { _, newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                            medicationPhotoData = processPhoto(data)
+                        }
+                    }
+                }
+
+                Text("Photo is optional — helps identify your pill.")
+                    .font(.caption)
+                    .foregroundStyle(SimpleCareColors.secondaryText)
             }
 
             Spacer()
@@ -362,13 +415,27 @@ struct AddMedicationFlowView: View {
         }
     }
 
+    private func processPhoto(_ data: Data) -> Data? {
+        guard let uiImage = UIImage(data: data) else { return nil }
+        let maxDimension: CGFloat = 400
+        let size = uiImage.size
+        let scale = min(maxDimension / max(size.width, size.height), 1.0)
+        let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        let resized = renderer.image { _ in
+            uiImage.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        return resized.jpegData(compressionQuality: 0.6)
+    }
+
     private func saveMedication() {
         let medication = Medication(
             name: medicationName.trimmingCharacters(in: .whitespacesAndNewlines),
             dosage: dosage.trimmingCharacters(in: .whitespacesAndNewlines),
             notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),
             scheduleTimes: scheduleTimes,
-            isCritical: isCritical
+            isCritical: isCritical,
+            photoData: medicationPhotoData
         )
         modelContext.insert(medication)
 

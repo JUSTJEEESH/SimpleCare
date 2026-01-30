@@ -101,13 +101,21 @@ struct MedicationRowView: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Circle()
-                .fill(SimpleCareColors.sage.opacity(0.2))
-                .frame(width: 44, height: 44)
-                .overlay(
-                    Image(systemName: "pills.fill")
-                        .foregroundStyle(SimpleCareColors.sage)
-                )
+            if let photoData = medication.photoData, let uiImage = UIImage(data: photoData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 44, height: 44)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            } else {
+                Circle()
+                    .fill(SimpleCareColors.sage.opacity(0.2))
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        Image(systemName: "pills.fill")
+                            .foregroundStyle(SimpleCareColors.sage)
+                    )
+            }
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {

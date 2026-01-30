@@ -65,6 +65,19 @@ struct MedicationDetailView: View {
 
     private var infoCard: some View {
         VStack(alignment: .leading, spacing: 14) {
+            if let photoData = medication.photoData, let uiImage = UIImage(data: photoData) {
+                HStack {
+                    Spacer()
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    Spacer()
+                }
+                .padding(.bottom, 4)
+            }
+
             if !medication.dosage.isEmpty {
                 detailRow(title: "Dosage", value: medication.dosage)
             }

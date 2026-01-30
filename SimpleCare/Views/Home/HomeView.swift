@@ -1,5 +1,6 @@
 import SwiftUI
 @preconcurrency import SwiftData
+import WidgetKit
 
 struct HomeView: View {
     @AppStorage("userName") private var userName = ""
@@ -148,7 +149,15 @@ struct HomeView: View {
 
     private func nextMedicationCard(_ log: MedicationLog) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
+            HStack(spacing: 14) {
+                if let med = log.medication, let photoData = med.photoData, let uiImage = UIImage(data: photoData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Next Medication")
                         .font(.subheadline)
@@ -374,6 +383,26 @@ struct HomeView: View {
         )
 
         todayLogs = (try? modelContext.fetch(descriptor)) ?? []
+        updateWidgetData()
+    }
+
+    private func updateWidgetData() {
+        let defaults = UserDefaults(suiteName: "group.com.simplecare.shared")
+        defaults?.set(userName, forKey: "widgetUserName")
+        defaults?.set(takenCount, forKey: "widgetTakenCount")
+        defaults?.set(totalScheduled, forKey: "widgetTotalCount")
+
+        if let nextLog = pendingLogs.first {
+            defaults?.set(nextLog.medication?.name ?? "", forKey: "widgetNextMedName")
+            defaults?.set(nextLog.medication?.dosage ?? "", forKey: "widgetNextMedDosage")
+            defaults?.set(nextLog.scheduledTime, forKey: "widgetNextMedTime")
+        } else {
+            defaults?.removeObject(forKey: "widgetNextMedName")
+            defaults?.removeObject(forKey: "widgetNextMedDosage")
+            defaults?.removeObject(forKey: "widgetNextMedTime")
+        }
+
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 

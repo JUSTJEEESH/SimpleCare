@@ -11,6 +11,7 @@ final class Medication {
     var isCritical: Bool
     var isActive: Bool
     var createdAt: Date
+    var photoData: Data?
 
     @Relationship(deleteRule: .cascade, inverse: \MedicationLog.medication)
     var logs: [MedicationLog]
@@ -31,7 +32,8 @@ final class Medication {
         notes: String = "",
         scheduleTimes: [Date] = [],
         isCritical: Bool = false,
-        isActive: Bool = true
+        isActive: Bool = true,
+        photoData: Data? = nil
     ) {
         self.id = UUID()
         self.name = name
@@ -40,6 +42,7 @@ final class Medication {
         self.isCritical = isCritical
         self.isActive = isActive
         self.createdAt = Date()
+        self.photoData = photoData
         self.logs = []
         self.scheduleTimesData = try? JSONEncoder().encode(scheduleTimes)
     }
