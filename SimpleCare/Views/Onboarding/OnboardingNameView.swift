@@ -21,6 +21,7 @@ struct OnboardingNameView: View {
 
                     TextField("Your name", text: $name)
                         .font(.title2)
+                        .foregroundStyle(SimpleCareColors.charcoal)
                         .multilineTextAlignment(.center)
                         .textContentType(.givenName)
                         .focused($isFieldFocused)
@@ -28,7 +29,7 @@ struct OnboardingNameView: View {
                         .padding(.horizontal, 24)
                         .background(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .fill(Color.white)
+                                .fill(SimpleCareColors.fieldBackground)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)

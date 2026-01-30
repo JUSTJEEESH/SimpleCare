@@ -70,7 +70,7 @@ struct HomeView: View {
                 .padding(.top, 8)
             }
             .background(SimpleCareColors.warmBackground)
-            .navigationTitle(greeting)
+            .navigationTitle(navTitle)
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showAddMedication) {
                 AddMedicationFlowView()
@@ -113,22 +113,20 @@ struct HomeView: View {
     }
 
     private var heroMessage: String {
-        let name = userName.isEmpty ? "" : ", \(userName)"
-        let timeOfDay = TimeOfDay.current
         let pendingCount = pendingLogs.count
 
-        switch timeOfDay {
+        switch TimeOfDay.current {
         case .morning:
             if pendingCount > 0 {
-                return "\(timeOfDay.greeting)\(name). You have \(pendingCount) medication\(pendingCount == 1 ? "" : "s") to take."
+                return "You have \(pendingCount) medication\(pendingCount == 1 ? "" : "s") to take this morning."
             }
-            return "\(timeOfDay.greeting)\(name). You're all set for this morning."
+            return "You're all set for this morning."
 
         case .midday, .afternoon:
             if let next = pendingLogs.first, let med = next.medication {
                 let formatter = DateFormatter()
                 formatter.timeStyle = .short
-                return "Next: \(med.name) at \(formatter.string(from: next.scheduledTime))."
+                return "Next up: \(med.name) at \(formatter.string(from: next.scheduledTime))."
             }
             if !upcomingAppointments.isEmpty {
                 let apt = upcomingAppointments[0]
@@ -136,11 +134,11 @@ struct HomeView: View {
                 formatter.timeStyle = .short
                 return "\(apt.title.isEmpty ? apt.doctorName : apt.title) today at \(formatter.string(from: apt.dateTime))."
             }
-            return "\(timeOfDay.greeting)\(name). Everything looks good."
+            return "Everything looks good today."
 
         case .evening, .night:
             if pendingCount == 0 {
-                return "You're all set for today. Rest well\(name)."
+                return "You're all set for today. Rest well."
             }
             return "You have \(pendingCount) medication\(pendingCount == 1 ? "" : "s") left for today."
         }
@@ -280,7 +278,7 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(minHeight: 100)
-            .background(Color.white)
+            .background(SimpleCareColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 3)
         }
@@ -326,9 +324,11 @@ struct HomeView: View {
 
     // MARK: - Helpers
 
-    private var greeting: String {
-        let name = userName.isEmpty ? "" : ", \(userName)"
-        return "\(TimeOfDay.current.greeting)\(name)"
+    private var navTitle: String {
+        if userName.isEmpty {
+            return "Home"
+        }
+        return "Hi, \(userName)"
     }
 
     private func timeString(from date: Date) -> String {

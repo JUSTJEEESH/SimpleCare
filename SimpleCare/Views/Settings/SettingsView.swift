@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage("userName") private var userName = ""
     @AppStorage("appLockEnabled") private var appLockEnabled = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
+    @AppStorage("appearanceMode") private var appearanceMode = 0 // 0=system, 1=light, 2=dark
 
     @Environment(\.modelContext) private var modelContext
     @State private var showExportSheet = false
@@ -40,6 +41,10 @@ struct SettingsView: View {
 
                     // Security
                     securitySection
+                        .padding(.horizontal, 20)
+
+                    // Appearance
+                    appearanceSection
                         .padding(.horizontal, 20)
 
                     // About
@@ -85,8 +90,9 @@ struct SettingsView: View {
             HStack {
                 TextField("Your name", text: $userName)
                     .font(.body)
+                    .foregroundStyle(SimpleCareColors.charcoal)
                     .padding(14)
-                    .background(Color.white)
+                    .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
@@ -163,19 +169,75 @@ struct SettingsView: View {
                 .font(.headline)
                 .foregroundStyle(SimpleCareColors.charcoal)
 
-            Toggle(isOn: $appLockEnabled) {
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 14) {
+                Image(systemName: appLockEnabled ? "lock.fill" : "lock.open")
+                    .font(.title3)
+                    .foregroundStyle(appLockEnabled ? SimpleCareColors.calmBlue : SimpleCareColors.secondaryText)
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text("App Lock")
-                        .font(.body.weight(.medium))
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(SimpleCareColors.charcoal)
                     Text("Require Face ID or Touch ID to open")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(SimpleCareColors.secondaryText)
                 }
+
+                Spacer()
+
+                Toggle("", isOn: $appLockEnabled)
+                    .tint(SimpleCareColors.calmBlue)
+                    .labelsHidden()
             }
-            .tint(SimpleCareColors.sage)
         }
         .gentleCard()
+    }
+
+    // MARK: - Appearance
+
+    private var appearanceSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Appearance")
+                .font(.headline)
+                .foregroundStyle(SimpleCareColors.charcoal)
+
+            Text("Choose how Simple Care looks.")
+                .font(.subheadline)
+                .foregroundStyle(SimpleCareColors.secondaryText)
+
+            HStack(spacing: 10) {
+                appearanceOption(title: "System", icon: "iphone", tag: 0)
+                appearanceOption(title: "Light", icon: "sun.max.fill", tag: 1)
+                appearanceOption(title: "Dark", icon: "moon.fill", tag: 2)
+            }
+        }
+        .gentleCard()
+    }
+
+    private func appearanceOption(title: String, icon: String, tag: Int) -> some View {
+        Button {
+            appearanceMode = tag
+            CalmHaptics.selection()
+        } label: {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(appearanceMode == tag ? SimpleCareColors.calmBlue : SimpleCareColors.secondaryText)
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(appearanceMode == tag ? SimpleCareColors.charcoal : SimpleCareColors.secondaryText)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 70)
+            .background(appearanceMode == tag ? SimpleCareColors.calmBlueLight : Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(appearanceMode == tag ? SimpleCareColors.calmBlue : Color.clear, lineWidth: 2)
+            )
+        }
+        .accessibilityLabel("\(title) mode")
+        .accessibilityAddTraits(appearanceMode == tag ? .isSelected : [])
     }
 
     // MARK: - About

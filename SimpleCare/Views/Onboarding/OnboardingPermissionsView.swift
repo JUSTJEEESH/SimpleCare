@@ -107,7 +107,7 @@ struct OnboardingPermissionsView: View {
                 .labelsHidden()
         }
         .padding(16)
-        .background(Color.white)
+        .background(SimpleCareColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(subtitle). \(optional ? "Optional." : "") \(isOn.wrappedValue ? "Enabled" : "Disabled")")

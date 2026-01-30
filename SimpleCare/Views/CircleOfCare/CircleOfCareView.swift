@@ -139,7 +139,7 @@ struct CircleOfCareView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
+        .background(SimpleCareColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityElement(children: .combine)
     }
