@@ -13,8 +13,12 @@ struct HomeView: View {
     @Query(sort: \Appointment.dateTime)
     private var allAppointments: [Appointment]
 
+    @Query(sort: \CareCircleMember.createdAt)
+    private var careCircleMembers: [CareCircleMember]
+
     @State private var showAddMedication = false
     @State private var showAddAppointment = false
+    @State private var showCircleOfCare = false
     @State private var todayLogs: [MedicationLog] = []
 
     private var upcomingAppointments: [Appointment] {
@@ -60,6 +64,12 @@ struct HomeView: View {
                     quickActions
                         .padding(.horizontal, 20)
 
+                    // Circle of Care quick access
+                    if !careCircleMembers.isEmpty {
+                        careCircleCard
+                            .padding(.horizontal, 20)
+                    }
+
                     // Today's Progress
                     if !todayLogs.isEmpty {
                         todayProgressSection
@@ -78,6 +88,9 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showAddAppointment) {
                 AddAppointmentView()
+            }
+            .sheet(isPresented: $showCircleOfCare) {
+                CircleOfCareView()
             }
             .onAppear {
                 refreshTodayLogs()
@@ -331,6 +344,50 @@ struct HomeView: View {
         .gentleCard()
     }
 
+    // MARK: - Circle of Care Card
+
+    private var careCircleCard: some View {
+        Button {
+            showCircleOfCare = true
+            CalmHaptics.selection()
+        } label: {
+            HStack(spacing: 14) {
+                HStack(spacing: -6) {
+                    ForEach(careCircleMembers.prefix(3), id: \.id) { member in
+                        let initials = member.name.split(separator: " ")
+                            .prefix(2).compactMap { $0.first }.map { String($0) }.joined().uppercased()
+                        Text(initials.isEmpty ? "?" : initials)
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 28, height: 28)
+                            .background(SimpleCareColors.calmBlue)
+                            .clipShape(Circle())
+                            .overlay(Circle().strokeBorder(SimpleCareColors.cardBackground, lineWidth: 2))
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Circle of Care")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(SimpleCareColors.charcoal)
+                    Text("\(careCircleMembers.count) \(careCircleMembers.count == 1 ? "person" : "people") watching over you")
+                        .font(.caption)
+                        .foregroundStyle(SimpleCareColors.secondaryText)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(SimpleCareColors.secondaryText)
+            }
+        }
+        .padding(16)
+        .background(SimpleCareColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 3)
+    }
+
     // MARK: - Helpers
 
     private var navTitle: String {
@@ -408,5 +465,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self], inMemory: true)
+        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self, CareCircleMember.self], inMemory: true)
 }

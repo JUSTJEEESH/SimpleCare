@@ -283,30 +283,39 @@ struct AddMedicationFlowView: View {
                 .padding(.horizontal, 24)
 
                 // Important medication toggle — highly visible
-                HStack(spacing: 14) {
-                    Image(systemName: isCritical ? "heart.fill" : "heart")
-                        .font(.title2)
-                        .foregroundStyle(isCritical ? SimpleCareColors.calmBlue : SimpleCareColors.secondaryText)
+                Button {
+                    isCritical.toggle()
+                    CalmHaptics.selection()
+                } label: {
+                    HStack(spacing: 16) {
+                        Image(systemName: isCritical ? "heart.fill" : "heart")
+                            .font(.system(size: 28))
+                            .foregroundStyle(isCritical ? SimpleCareColors.heartRed : SimpleCareColors.secondaryText)
+                            .symbolEffect(.bounce, value: isCritical)
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Important medication")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(SimpleCareColors.charcoal)
-                        Text("Family will be gently notified if missed")
-                            .font(.subheadline)
-                            .foregroundStyle(SimpleCareColors.secondaryText)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Important medication")
+                                .font(.body.weight(.bold))
+                                .foregroundStyle(SimpleCareColors.charcoal)
+                            Text("Your care circle will be gently notified if missed")
+                                .font(.subheadline)
+                                .foregroundStyle(isCritical ? SimpleCareColors.charcoalLight : SimpleCareColors.secondaryText)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: isCritical ? "checkmark.circle.fill" : "circle")
+                            .font(.title2)
+                            .foregroundStyle(isCritical ? SimpleCareColors.heartRed : SimpleCareColors.upcoming)
                     }
-
-                    Spacer()
-
-                    Toggle("", isOn: $isCritical)
-                        .tint(SimpleCareColors.calmBlue)
-                        .labelsHidden()
                 }
-                .padding(18)
-                .background(isCritical ? SimpleCareColors.calmBlueLight : Color.white)
+                .padding(20)
+                .background(isCritical ? SimpleCareColors.heartRedLight : SimpleCareColors.fieldBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(isCritical ? SimpleCareColors.heartRed.opacity(0.4) : SimpleCareColors.upcoming.opacity(0.3), lineWidth: 1.5)
+                )
                 .padding(.horizontal, 24)
                 .animation(.easeInOut(duration: 0.2), value: isCritical)
 

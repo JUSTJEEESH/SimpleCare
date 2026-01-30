@@ -41,5 +41,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
-        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self], inMemory: true)
+        .modelContainer(for: [Medication.self, MedicationLog.self, Appointment.self, HealthNote.self, CareCircleMember.self], inMemory: true)
 }

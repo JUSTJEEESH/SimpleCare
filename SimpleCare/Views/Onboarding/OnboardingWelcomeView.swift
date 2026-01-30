@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingWelcomeView: View {
     let onContinue: () -> Void
+    var onCaregiverSetup: (() -> Void)?
 
     @State private var showTitle = false
     @State private var showSubtitle = false
@@ -46,11 +47,29 @@ struct OnboardingWelcomeView: View {
                 Spacer()
 
                 if showButton {
-                    Button("Get Started") {
-                        CalmHaptics.gentle()
-                        onContinue()
+                    VStack(spacing: 16) {
+                        Button("Get Started") {
+                            CalmHaptics.gentle()
+                            onContinue()
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+
+                        if let caregiverAction = onCaregiverSetup {
+                            Button {
+                                CalmHaptics.selection()
+                                caregiverAction()
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "person.2.fill")
+                                        .font(.subheadline)
+                                    Text("Setting this up for someone?")
+                                        .font(.subheadline.weight(.medium))
+                                }
+                                .foregroundStyle(SimpleCareColors.calmBlue)
+                            }
+                            .padding(.top, 4)
+                        }
                     }
-                    .buttonStyle(PrimaryButtonStyle())
                     .padding(.horizontal, 32)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }

@@ -41,6 +41,10 @@
 		A10000010000000000000032 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000032; };
 		A10000010000000000000033 /* SimpleCareWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000033; };
 		A10000010000000000000034 /* SimpleCareWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A10000030000000000000002; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A10000010000000000000035 /* EditMedicationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000037; };
+		A10000010000000000000036 /* CareCircleMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000038; };
+		A10000010000000000000037 /* AddCaregiverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000039; };
+		A10000010000000000000038 /* OnboardingCaregiverSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000040; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +108,10 @@
 		A10000020000000000000034 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000020000000000000035 /* SimpleCare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleCare.entitlements; sourceTree = "<group>"; };
 		A10000020000000000000036 /* SimpleCareWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleCareWidgetExtension.entitlements; sourceTree = "<group>"; };
+		A10000020000000000000037 /* EditMedicationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMedicationView.swift; sourceTree = "<group>"; };
+		A10000020000000000000038 /* CareCircleMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareCircleMember.swift; sourceTree = "<group>"; };
+		A10000020000000000000039 /* AddCaregiverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCaregiverView.swift; sourceTree = "<group>"; };
+		A10000020000000000000040 /* OnboardingCaregiverSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCaregiverSetupView.swift; sourceTree = "<group>"; };
 		A10000030000000000000001 /* SimpleCare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleCare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000030000000000000002 /* SimpleCareWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SimpleCareWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -166,6 +174,7 @@
 				A10000020000000000000003 /* MedicationLog.swift */,
 				A10000020000000000000004 /* Appointment.swift */,
 				A10000020000000000000005 /* HealthNote.swift */,
+				A10000020000000000000038 /* CareCircleMember.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -195,6 +204,7 @@
 				A10000020000000000000011 /* OnboardingSharingView.swift */,
 				A10000020000000000000012 /* OnboardingPermissionsView.swift */,
 				A10000020000000000000013 /* OnboardingFirstWinView.swift */,
+				A10000020000000000000040 /* OnboardingCaregiverSetupView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -211,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000020000000000000016 /* AddMedicationFlowView.swift */,
+				A10000020000000000000037 /* EditMedicationView.swift */,
 				A10000020000000000000017 /* MedicationListView.swift */,
 				A10000020000000000000018 /* MedicationDetailView.swift */,
 				A10000020000000000000019 /* MedicationLogView.swift */,
@@ -276,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000020000000000000027 /* CircleOfCareView.swift */,
+				A10000020000000000000039 /* AddCaregiverView.swift */,
 			);
 			path = CircleOfCare;
 			sourceTree = "<group>";
@@ -409,6 +421,7 @@
 				A10000010000000000000017 /* MedicationListView.swift in Sources */,
 				A10000010000000000000018 /* MedicationDetailView.swift in Sources */,
 				A10000010000000000000019 /* MedicationLogView.swift in Sources */,
+				A10000010000000000000035 /* EditMedicationView.swift in Sources */,
 				A10000010000000000000020 /* AddAppointmentView.swift in Sources */,
 				A10000010000000000000021 /* AppointmentListView.swift in Sources */,
 				A10000010000000000000022 /* AppointmentDetailView.swift in Sources */,
@@ -420,6 +433,9 @@
 				A10000010000000000000028 /* NotificationService.swift in Sources */,
 				A10000010000000000000029 /* PDFExportService.swift in Sources */,
 				A10000010000000000000030 /* DailyLogService.swift in Sources */,
+				A10000010000000000000036 /* CareCircleMember.swift in Sources */,
+				A10000010000000000000037 /* AddCaregiverView.swift in Sources */,
+				A10000010000000000000038 /* OnboardingCaregiverSetupView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

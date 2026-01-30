@@ -63,6 +63,14 @@ enum SimpleCareColors {
     static let primaryAction = calmBlue
     static let destructive = Color(red: 0.82, green: 0.42, blue: 0.42)
 
+    // Heart — cool, bright rose-red for important medications
+    static let heartRed = Color(red: 0.78, green: 0.30, blue: 0.40)
+    static let heartRedLight = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.38, green: 0.15, blue: 0.19, alpha: 1)
+            : UIColor(red: 0.97, green: 0.89, blue: 0.91, alpha: 1)
+    })
+
     // Input field background — distinct from card background
     static let fieldBackground = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
