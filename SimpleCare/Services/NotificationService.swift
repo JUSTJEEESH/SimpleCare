@@ -1,14 +1,15 @@
 import UserNotifications
 import UIKit
 
+@MainActor
 final class NotificationService {
-    static let shared = NotificationService()
+    nonisolated(unsafe) static let shared = NotificationService()
 
     private init() {}
 
     // MARK: - Permission
 
-    func requestPermission(completion: @escaping (Bool) -> Void) {
+    func requestPermission(completion: @escaping @Sendable (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(
             options: [.alert, .sound, .badge]
         ) { granted, _ in

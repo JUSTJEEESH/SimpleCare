@@ -1,8 +1,9 @@
 import UIKit
 import SwiftData
 
+@MainActor
 final class PDFExportService {
-    static let shared = PDFExportService()
+    nonisolated(unsafe) static let shared = PDFExportService()
 
     private init() {}
 
@@ -47,7 +48,6 @@ final class PDFExportService {
                     .paragraphStyle: paragraphStyle
                 ]
 
-                let rect = CGRect(x: x, y: yOffset, width: width, height: pageHeight - yOffset - margin)
                 let boundingRect = (text as NSString).boundingRect(
                     with: CGSize(width: width, height: .greatestFiniteMagnitude),
                     options: [.usesLineFragmentOrigin, .usesFontLeading],

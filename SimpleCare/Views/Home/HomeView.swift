@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftData
+@preconcurrency import SwiftData
 
 struct HomeView: View {
     @AppStorage("userName") private var userName = ""

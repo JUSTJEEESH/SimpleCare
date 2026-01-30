@@ -1,8 +1,9 @@
 import Foundation
-import SwiftData
+@preconcurrency import SwiftData
 
+@MainActor
 final class DailyLogService {
-    static let shared = DailyLogService()
+    nonisolated(unsafe) static let shared = DailyLogService()
 
     private init() {}
 

@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftData
+@preconcurrency import SwiftData
 
 struct MedicationDetailView: View {
     @Environment(\.dismiss) private var dismiss
