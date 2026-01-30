@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftData
+@preconcurrency import SwiftData
 
 struct MedicationLogView: View {
     @Environment(\.modelContext) private var modelContext

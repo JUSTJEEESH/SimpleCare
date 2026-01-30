@@ -123,6 +123,7 @@ extension View {
 
 // MARK: - Haptics
 
+@MainActor
 enum CalmHaptics {
     static func success() {
         let generator = UINotificationFeedbackGenerator()
