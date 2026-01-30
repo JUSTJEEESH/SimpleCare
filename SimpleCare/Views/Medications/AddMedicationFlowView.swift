@@ -96,11 +96,12 @@ struct AddMedicationFlowView: View {
 
                 TextField("Medication name", text: $medicationName)
                     .font(.title3)
+                    .foregroundStyle(SimpleCareColors.charcoal)
                     .multilineTextAlignment(.center)
                     .textContentType(.name)
                     .padding(.vertical, 16)
                     .padding(.horizontal, 24)
-                    .background(Color.white)
+                    .background(SimpleCareColors.fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -134,10 +135,11 @@ struct AddMedicationFlowView: View {
 
                 TextField("e.g., 1 tablet, 10mg", text: $dosage)
                     .font(.title3)
+                    .foregroundStyle(SimpleCareColors.charcoal)
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 16)
                     .padding(.horizontal, 24)
-                    .background(Color.white)
+                    .background(SimpleCareColors.fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -164,10 +166,10 @@ struct AddMedicationFlowView: View {
     // MARK: - Step 3: Schedule
 
     private var stepScheduleView: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 20) {
+                Spacer().frame(height: 16)
 
-            VStack(spacing: 16) {
                 Text("When do you take it?")
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(SimpleCareColors.charcoal)
@@ -175,66 +177,92 @@ struct AddMedicationFlowView: View {
 
                 VStack(spacing: 12) {
                     ForEach(scheduleTimes.indices, id: \.self) { index in
-                        HStack {
+                        HStack(spacing: 12) {
+                            Text("Time \(index + 1)")
+                                .font(.body.weight(.medium))
+                                .foregroundStyle(SimpleCareColors.charcoal)
+
+                            Spacer()
+
                             DatePicker(
                                 "Time \(index + 1)",
                                 selection: $scheduleTimes[index],
                                 displayedComponents: .hourAndMinute
                             )
                             .labelsHidden()
-                            .font(.title3)
+                            .datePickerStyle(.compact)
+                            .scaleEffect(1.2)
+                            .tint(SimpleCareColors.calmBlue)
 
                             if scheduleTimes.count > 1 {
                                 Button {
                                     scheduleTimes.remove(at: index)
                                 } label: {
                                     Image(systemName: "minus.circle.fill")
-                                        .foregroundStyle(SimpleCareColors.destructive.opacity(0.7))
-                                        .font(.title3)
+                                        .foregroundStyle(SimpleCareColors.destructive)
+                                        .font(.title2)
                                 }
+                                .accessibilityLabel("Remove time \(index + 1)")
                             }
                         }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 18)
+                        .background(SimpleCareColors.fieldBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
                     }
                 }
-                .padding(.horizontal, 32)
+                .padding(.horizontal, 24)
 
                 Button {
                     let newTime = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date()) ?? Date()
                     scheduleTimes.append(newTime)
                     CalmHaptics.selection()
                 } label: {
-                    Label("Add another time", systemImage: "plus.circle")
-                        .font(.body.weight(.medium))
+                    Label("Add another time", systemImage: "plus.circle.fill")
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(SimpleCareColors.calmBlue)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 52)
+                        .background(SimpleCareColors.calmBlueLight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 }
-                .padding(.top, 4)
+                .padding(.horizontal, 24)
 
-                Toggle(isOn: $isCritical) {
-                    VStack(alignment: .leading, spacing: 2) {
+                // Important medication toggle — highly visible
+                HStack(spacing: 14) {
+                    Image(systemName: isCritical ? "heart.fill" : "heart")
+                        .font(.title2)
+                        .foregroundStyle(isCritical ? SimpleCareColors.calmBlue : SimpleCareColors.secondaryText)
+
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Important medication")
-                            .font(.body.weight(.medium))
+                            .font(.body.weight(.semibold))
                             .foregroundStyle(SimpleCareColors.charcoal)
                         Text("Family will be gently notified if missed")
-                            .font(.caption)
+                            .font(.subheadline)
                             .foregroundStyle(SimpleCareColors.secondaryText)
                     }
+
+                    Spacer()
+
+                    Toggle("", isOn: $isCritical)
+                        .tint(SimpleCareColors.calmBlue)
+                        .labelsHidden()
                 }
-                .tint(SimpleCareColors.sage)
-                .padding(.horizontal, 32)
-                .padding(.top, 8)
+                .padding(18)
+                .background(isCritical ? SimpleCareColors.calmBlueLight : Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 2)
+                .padding(.horizontal, 24)
+                .animation(.easeInOut(duration: 0.2), value: isCritical)
+
+                nextButton(enabled: !scheduleTimes.isEmpty)
+
+                Spacer().frame(height: 20)
             }
-
-            Spacer()
-
-            nextButton(enabled: !scheduleTimes.isEmpty)
-
-            Spacer().frame(height: 20)
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 0)
     }
 
     // MARK: - Step 4: Notes
@@ -255,9 +283,11 @@ struct AddMedicationFlowView: View {
 
                 TextEditor(text: $notes)
                     .font(.body)
+                    .foregroundStyle(SimpleCareColors.charcoal)
+                    .scrollContentBackground(.hidden)
                     .frame(height: 120)
                     .padding(12)
-                    .background(Color.white)
+                    .background(SimpleCareColors.fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)

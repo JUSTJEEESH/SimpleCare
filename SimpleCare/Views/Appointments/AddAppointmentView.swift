@@ -53,8 +53,9 @@ struct AddAppointmentView: View {
 
                     TextField("e.g., Annual checkup", text: $title)
                         .font(.body)
+                        .foregroundStyle(SimpleCareColors.charcoal)
                         .padding(14)
-                        .background(Color.white)
+                        .background(SimpleCareColors.fieldBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
@@ -65,9 +66,10 @@ struct AddAppointmentView: View {
 
                     TextField("e.g., Dr. Smith", text: $doctorName)
                         .font(.body)
+                        .foregroundStyle(SimpleCareColors.charcoal)
                         .textContentType(.name)
                         .padding(14)
-                        .background(Color.white)
+                        .background(SimpleCareColors.fieldBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
@@ -87,7 +89,7 @@ struct AddAppointmentView: View {
                     .datePickerStyle(.compact)
                     .padding(14)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
+                    .background(SimpleCareColors.fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
@@ -104,9 +106,10 @@ struct AddAppointmentView: View {
 
                     TextField("e.g., 123 Main St", text: $location)
                         .font(.body)
+                        .foregroundStyle(SimpleCareColors.charcoal)
                         .textContentType(.fullStreetAddress)
                         .padding(14)
-                        .background(Color.white)
+                        .background(SimpleCareColors.fieldBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
@@ -123,19 +126,29 @@ struct AddAppointmentView: View {
 
                     TextField("e.g., Bring insurance card", text: $notes)
                         .font(.body)
+                        .foregroundStyle(SimpleCareColors.charcoal)
                         .padding(14)
-                        .background(Color.white)
+                        .background(SimpleCareColors.fieldBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
                 // Prep Reminder
-                VStack(alignment: .leading, spacing: 8) {
-                    Toggle(isOn: $prepReminder) {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 14) {
+                        Image(systemName: prepReminder ? "bell.fill" : "bell")
+                            .font(.title3)
+                            .foregroundStyle(prepReminder ? SimpleCareColors.calmBlue : SimpleCareColors.secondaryText)
+
                         Text("Preparation reminder")
-                            .font(.body.weight(.medium))
+                            .font(.body.weight(.semibold))
                             .foregroundStyle(SimpleCareColors.charcoal)
+
+                        Spacer()
+
+                        Toggle("", isOn: $prepReminder)
+                            .tint(SimpleCareColors.calmBlue)
+                            .labelsHidden()
                     }
-                    .tint(SimpleCareColors.sage)
 
                     if prepReminder {
                         Picker("Remind me", selection: $prepReminderMinutes) {
@@ -146,12 +159,18 @@ struct AddAppointmentView: View {
                             Text("1 day before").tag(1440)
                         }
                         .pickerStyle(.menu)
+                        .tint(SimpleCareColors.calmBlue)
+                        .font(.body)
                         .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white)
+                        .background(SimpleCareColors.fieldBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
                 }
+                .padding(16)
+                .background(prepReminder ? SimpleCareColors.calmBlueLight : SimpleCareColors.sageLight)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .animation(.easeInOut(duration: 0.2), value: prepReminder)
 
                 // Save Button
                 Button("Save Appointment") {

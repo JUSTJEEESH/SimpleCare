@@ -13,11 +13,12 @@ struct AddNoteView: View {
             VStack(spacing: 16) {
                 TextEditor(text: $content)
                     .font(.body)
+                    .foregroundStyle(SimpleCareColors.charcoal)
                     .focused($isFocused)
                     .padding(16)
                     .frame(maxHeight: .infinity)
                     .scrollContentBackground(.hidden)
-                    .background(Color.white)
+                    .background(SimpleCareColors.fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .overlay(
                         Group {

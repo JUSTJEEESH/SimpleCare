@@ -6,6 +6,7 @@ struct SimpleCareApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("userName") private var userName = ""
     @AppStorage("appLockEnabled") private var appLockEnabled = false
+    @AppStorage("appearanceMode") private var appearanceMode = 0
 
     private let modelContainer: ModelContainer
 
@@ -28,20 +29,31 @@ struct SimpleCareApp: App {
         }
     }
 
+    private var preferredColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case 1: return .light
+        case 2: return .dark
+        default: return nil
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
-            if hasCompletedOnboarding {
-                MainTabView()
-                    .modelContainer(modelContainer)
-                    .onAppear {
-                        DailyLogService.shared.createTodayLogs(
-                            context: modelContainer.mainContext
-                        )
-                    }
-            } else {
-                OnboardingFlowView()
-                    .modelContainer(modelContainer)
+            Group {
+                if hasCompletedOnboarding {
+                    MainTabView()
+                        .modelContainer(modelContainer)
+                        .onAppear {
+                            DailyLogService.shared.createTodayLogs(
+                                context: modelContainer.mainContext
+                            )
+                        }
+                } else {
+                    OnboardingFlowView()
+                        .modelContainer(modelContainer)
+                }
             }
+            .preferredColorScheme(preferredColorScheme)
         }
     }
 }

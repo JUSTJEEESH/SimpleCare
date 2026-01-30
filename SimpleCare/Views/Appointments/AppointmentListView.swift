@@ -174,7 +174,7 @@ struct AppointmentRowView: View {
                 .foregroundStyle(SimpleCareColors.secondaryText.opacity(0.5))
         }
         .padding(14)
-        .background(Color.white)
+        .background(SimpleCareColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
         .opacity(isPast ? 0.7 : 1.0)
